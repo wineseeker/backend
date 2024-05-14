@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
+// @ts-ignore
 import swaggerDocument from "../swagger-output.json" assert { type: "json" };
 
 import {fileURLToPath} from "node:url";
