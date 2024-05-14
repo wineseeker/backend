@@ -6,7 +6,7 @@ import {lucia} from "../lib/lucia-auth.js";
 const prisma = new PrismaClient()
 const router = Router()
 
-router.post("/", async (req, res, next) => {
+router.post("/", async (req, res) => {
     /*  #swagger.path = '/login'
         #swagger.tags = ['auth']
         #swagger.requestBody = {
