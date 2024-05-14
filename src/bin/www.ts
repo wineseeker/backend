@@ -5,7 +5,7 @@
  */
 
 import app from '../app.js';
-import debug from 'debug';
+// import debug from 'debug';
 import http from 'http';
 
 /**
@@ -34,7 +34,7 @@ server.listen(port, () => {
   `);
 });
 server.on('error', onError);
-server.on('listening', onListening);
+// server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -88,10 +88,10 @@ function onError(error: { syscall: string; code: any; }) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+/*function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr?.port;
   debug('Listening on ' + bind);
-}
+}*/
