@@ -31,7 +31,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
     // #swagger.ignore = true
-    res.redirect('/api-docs')
+    res.redirect('/api-docs/')
 })
 
 app.use(function(req, res, _) {
