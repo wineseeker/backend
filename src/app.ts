@@ -27,6 +27,16 @@ app.use('/signup', signupRouter)
 app.use('/login', loginRouter)
 
 //swagger
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.get('/', (req, res) => {
+    // #swagger.ignore = true
+    res.redirect('/api-docs')
+})
+
+app.use(function(req, res, _) {
+    res.set('Content-Type', 'text/plain')
+    res.status(404).send('Sorry, we cannot find that!')
+});
 
 export default app;
