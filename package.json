@@ -10,6 +10,9 @@
     "prisma:studio": "npx prisma studio",
     "swagger": "node ./swagger.js"
   },
+  "engines": {
+    "node": "^20.9.0"
+  },
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@node-rs/argon2": "^1.8.3",
