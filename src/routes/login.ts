@@ -55,9 +55,8 @@ router.post("/", async (req, res) => {
         outputLen: 32,
         parallelism: 1
     });
-    if (!validPassword) {
-        return res.json({msg: "Invalid email or password"}).status(400)
-    }
+    if (!validPassword)
+        return res.status(400).json({msg: "Invalid email or password"})
 
     const session = await lucia.createSession(user.id, {});
     return res.json(session);

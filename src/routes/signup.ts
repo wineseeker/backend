@@ -24,11 +24,11 @@ router.post('/', async (req, res) => {
     */
     const email = req.body.email
     if (!email || typeof email !== "string" || !isValidEmail(email)) {
-        return res.send("email")
+        return res.status(400).send("email")
     }
     const password = req.body.password;
     if (!password || typeof password !== "string" || password.length < 6) {
-        return res.send("password")
+        return res.status(400).send("password")
     }
 
     const passwordHash = await hash(password, {
