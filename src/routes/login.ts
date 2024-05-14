@@ -22,11 +22,11 @@ router.post("/", async (req, res) => {
     */
     const email = await req.body.email;
     if (!email || typeof email !== "string") {
-        return res.send("Invalid email").status(400)
+        return res.status(400).send("Invalid email")
     }
     const password = await req.body.password;
     if (!password || typeof password !== "string") {
-        return res.send(null).status(400)
+        return res.status(400).send(null)
     }
 
     const user = await prisma.user.findUnique({
