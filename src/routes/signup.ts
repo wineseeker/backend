@@ -24,11 +24,15 @@ router.post('/', async (req, res) => {
     */
     const email = req.body.email
     if (!email || typeof email !== "string" || !isValidEmail(email)) {
-        return res.status(400).send("email")
+        return res.status(400).json({code: 1, msg: "Invalid email"})
     }
     const password = req.body.password;
     if (!password || typeof password !== "string" || password.length < 6) {
-        return res.status(400).send("password")
+        return res.status(400).json({code: 2, msg: "Invalid password"})
+    }
+
+    if (password !== req.body.retypePw) {
+        return res.status(400).json({code: 3, msg: "Invalid retype password"})
     }
 
     const passwordHash = await hash(password, {
@@ -53,7 +57,7 @@ router.post('/', async (req, res) => {
         return res.status(200).json(session)
     } catch {
         // db error, email taken, etc;
-        return res.status(400).send('Email already used')
+        return res.status(400).json({code: 4, msg: 'Email already used'})
     }
 })
 
