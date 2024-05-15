@@ -11,6 +11,7 @@ import {fileURLToPath} from "node:url";
 
 import signupRouter from './routes/signup.js'
 import loginRouter from './routes/login.js'
+import accountRouter from './routes/account.js'
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -25,6 +26,7 @@ app.use(express.static(join(__dirname, '../public')));
 //라우터
 app.use('/signup', signupRouter)
 app.use('/login', loginRouter)
+app.use('/account', accountRouter)
 
 //swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
