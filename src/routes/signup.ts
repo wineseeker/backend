@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
         });
 
         const session = await lucia.createSession(userId, {});
-        return res.status(200).json(session)
+        return res.status(201).json(session)
     } catch {
         // db error, email taken, etc;
         return res.status(400).json({code: 4, msg: 'Email already used'})
