@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
             content: {
                 "application/json": {
                     schema: {
-                        $ref: "#/components/schemas/emailPasswordSchema"
+                        $ref: "#/components/schemas/signupSchema"
                     }
                 }
             }

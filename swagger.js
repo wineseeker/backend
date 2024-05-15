@@ -24,7 +24,12 @@ const doc = {
                     scheme: 'bearer'
                 }
             },
-            emailPasswordSchema: {
+            signupSchema: {
+                $email: 'example@example.com',
+                $password: 'password',
+                $retypePw: 'password',
+            },
+            loginSchema: {
                 $email: 'example@example.com',
                 $password: 'password',
             },
