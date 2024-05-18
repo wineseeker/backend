@@ -24,14 +24,17 @@ router.post('/', async (req, res) => {
     */
     const email = req.body.email
     if (!email || typeof email !== "string" || !isValidEmail(email)) {
+        console.error("Invalid email")
         return res.status(400).json({code: 1, msg: "Invalid email"})
     }
     const password = req.body.password;
     if (!password || typeof password !== "string" || password.length < 6) {
+        console.error("Invalid password")
         return res.status(400).json({code: 2, msg: "Invalid password"})
     }
 
     if (password !== req.body.retypePw) {
+        console.error("Invalid retype password")
         return res.status(400).json({code: 3, msg: "Invalid retype password"})
     }
 
