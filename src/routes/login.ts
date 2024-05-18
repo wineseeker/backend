@@ -46,7 +46,7 @@ router.post("/", async (req, res) => {
         // Since protecting against this is non-trivial,
         // it is crucial your implementation is protected against brute-force attacks with login throttling etc.
         // If emails/usernames are public, you may outright tell the user that the username is invalid.
-        return res.json({msg: "Invalid email or password"}).status(400)
+        return res.status(400).json({msg: "Invalid email or password"})
     }
 
     const validPassword = await verify(user.password_hash, password, {
