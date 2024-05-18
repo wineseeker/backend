@@ -14,6 +14,10 @@ router.use(async (req: express.Request, res: express.Response, next: express.Nex
 
     const { session, user } = await lucia.validateSession(sessionId);
 
+    if (session === null || user === null) {
+        return res.status(401).json({msg: "Not logged in"})
+    }
+
     res.locals.session = session;
     res.locals.user = user;
 
@@ -41,6 +45,14 @@ router.get("/", async (req: express.Request, res: express.Response) => {
         email: userInfo.email,
         session: res.locals.session
     })
+})
+
+router.get("/logout", async (req: express.Request, res: express.Response) => {
+    /* #swagger.security = [{
+            "bearerAuth": []
+    }] */
+    await lucia.invalidateSession(res.locals.session.id);
+    res.status(200).json({msg: "Logged out"})
 })
 
 export default router;
