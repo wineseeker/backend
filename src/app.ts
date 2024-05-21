@@ -4,14 +4,18 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 // @ts-ignore
 import swaggerDocument from "../swagger-output.json" assert { type: "json" };
 
 import {fileURLToPath} from "node:url";
 
+import indexRouter from './routes/index.js'
 import signupRouter from './routes/signup.js'
 import loginRouter from './routes/login.js'
 import accountRouter from './routes/account.js'
+import surveyRouter from './routes/survey.js';
+import adminRouter from './routes/admin.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -24,10 +28,14 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, '../public')));
 
 //라우터
-app.use('/signup', signupRouter)
-app.use('/login', loginRouter)
-app.use('/account', accountRouter)
-
+app.use('/', indexRouter);
+app.use('/login', loginRouter);
+app.use('/signup', signupRouter);
+app.use('/account', accountRouter);
+app.use('/api', surveyRouter);
+app.use('/admin', adminRouter);
+// cors
+app.use(cors());
 //swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

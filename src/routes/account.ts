@@ -1,58 +1,13 @@
-import express, {Router} from "express";
-import {lucia} from "../lib/lucia-auth.js";
-import {PrismaClient} from "@prisma/client";
+import { Router } from 'express';
+import { getUserInfo, logout } from '../controllers/accountController.js';
+import { validateSession } from '../middlewares/authMiddleware.js';
 
-const prisma = new PrismaClient()
 const router = Router();
 
-router.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    // 세션 유효성 검사
-    const sessionId = lucia.readBearerToken(req.headers.authorization?.toString() ?? "")
-    if (!sessionId) {
-        return res.status(401).json({msg: "Not logged in"})
-    }
+router.use(validateSession);
 
-    const { session, user } = await lucia.validateSession(sessionId);
+router.get("/", getUserInfo);
 
-    if (session === null || user === null) {
-        return res.status(401).json({msg: "Not logged in"})
-    }
-
-    res.locals.session = session;
-    res.locals.user = user;
-
-    next();
-});
-
-router.get("/", async (req: express.Request, res: express.Response) => {
-    /* #swagger.security = [{
-            "bearerAuth": []
-    }] */
-    const userInfo = await prisma.user.findUnique({
-        where: {
-            id: res.locals.user.id,
-        },
-        select: {
-            email: true
-        }
-    })
-
-    if (userInfo === null || userInfo === undefined) {
-        return res.status(401).json({msg: "Not logged in"})
-    }
-
-    res.json({
-        email: userInfo.email,
-        session: res.locals.session
-    })
-})
-
-router.get("/logout", async (req: express.Request, res: express.Response) => {
-    /* #swagger.security = [{
-            "bearerAuth": []
-    }] */
-    await lucia.invalidateSession(res.locals.session.id);
-    res.status(200).json({msg: "Logged out"})
-})
+router.get("/logout", logout);
 
 export default router;
