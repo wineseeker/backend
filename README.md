@@ -31,5 +31,11 @@
 데이터베이스 스키마는 ```schema.prisma``` 파일에 정의되어 있습니다. 프리즈마 스키마에 대한 정보는 https://www.prisma.io/docs/orm/prisma-schema/overview 에서 보실 수 있습니다. 데이터타입에 대한 정보는 https://www.prisma.io/docs/orm/prisma-schema/data-model/models#native-types-mapping 에서 확인 가능합니다.
 
 데이터베이스 스키마를 바꾸신 다음 반드시 ```npx prisma migrate dev```를 실행해야 하며, ```npx prisma migrate dev```를 실행한 다음 지체없이 prisma 폴더를 커밋하셔야 합니다.
+
+### 코딩 스타일
+[구글 타입스크립트 스타일 가이드의 것](https://google.github.io/styleguide/tsguide.html#naming-rules-by-identifier-type)을 차용하여 클래스, 인터페이스, 타입, 열거형(enum), 타입 파라미터에서는 파스칼 표기법을 사용하고 변수, 함수 파라미터 등의 파라미터, 함수명, 메소드명, 속성, 모듈 별칭은 카멜 표기법을 사용합니다.
+
+파일명의 경우 케밥 표기법(예. ```lucia-auth.ts```)을 사용합니다. npm 패키지명도 캐밥 표기법을 사용하고 있으며, 카멜 표기법 내지 파스칼 표기법을 사용할 경우 ```luciaAuth.ts```와 ```luciaauth.ts```가 공존시키는 실수를 할 경우 OS간의 대소문자 구별법이 달라서 혼선을 일으킬 수 있으며, [구글 자바스크립트 스타일 가이드](https://google.github.io/styleguide/jsguide.html#file-name)에서도 사실상 스네이크 표기법 내지는 케밥 표기법을 권장하고 있기 때문입니다. 이 프로젝트에는 처음부터 케밥 표기법을 사용 중이었기 때문에 케밥 표기법을 사용합니다.
+
 ### ```swagger-output.json``` 파일 임의 수정 금지
 ```swagger-output.json``` 파일은 swagger-autogen에서 생성하는 파일로 API 정의가 자동으로 생성됩니다. 수정할 부분이 있을 경우 swagger-autogen에서 정하는 대로 API 정의가 수정되도록 해야합니다. ```swagger-output.json``` 파일에 출력되는 내용을 바꾸고 싶다면 https://swagger-autogen.github.io/docs 를 참고하세요.
