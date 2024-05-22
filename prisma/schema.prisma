@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id
   email         String    @unique
   password_hash String
   role          Role      @default(USER)
@@ -17,14 +17,14 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(uuid())
+  id        String   @id
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Result {
-  id      Int     @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   userId  String
   wineId  Int
   clicked Int
@@ -34,7 +34,7 @@ model Result {
 }
 
 model Wine {
-  id              Int     @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   name            String?
   ratingCount     Int
   ratingAverage   Float
@@ -45,30 +45,30 @@ model Wine {
 }
 
 model Characteristic {
-  id           Int    @id @default(autoincrement())
-  wineId       Int
-  sweetness    Float
-  alcohol      Float
-  tannin       Float
-  body         Float
-  acidity      Float
-  countryCode  String
-  grapes       String
-  grapesId     String
+  id          Int    @id @default(autoincrement())
+  wineId      Int
+  sweetness   Float
+  alcohol     Float
+  tannin      Float
+  body        Float
+  acidity     Float
+  countryCode String
+  grapes      String
+  grapesId    String
 
   wine Wine @relation(fields: [wineId], references: [id], onDelete: Cascade)
 }
 
 model Food {
-  id       Int     @id @default(autoincrement())
-  wineId   Int
-  name     String?
+  id     Int     @id @default(autoincrement())
+  wineId Int
+  name   String?
 
   wine Wine @relation(fields: [wineId], references: [id], onDelete: Cascade)
 }
 
 model Survey {
-  id        Int     @id @default(autoincrement())
+  id        Int   @id @default(autoincrement())
   wine_type Int
   body      Float
   alcohol   Float
