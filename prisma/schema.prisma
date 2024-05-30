@@ -34,28 +34,18 @@ model Result {
 }
 
 model Wine {
-  id              Int              @id @default(autoincrement())
-  name            String?
-  ratingCount     Int
-  ratingAverage   Float
-  typeId          Int
-  results         Result[]
-  characteristics Characteristic[]
-}
-
-model Characteristic {
-  id          Int    @id @default(autoincrement())
-  wineId      Int
-  sweetness   Float
-  alcohol     Float
-  tannin      Float
-  body        Float
-  acidity     Float
-  countryCode String
-  grapes      String
-  grapesId    String
-
-  wine Wine @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  id            Int      @id @default(autoincrement())
+  name          String?
+  ratingCount   Int
+  ratingAverage Float
+  typeId        Int
+  results       Result[]
+  sweetness     Float
+  alcohol       Float
+  tannin        Float
+  body          Float
+  acidity       Float
+  countryCode   String
 }
 
 model Food {
