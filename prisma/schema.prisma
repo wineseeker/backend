@@ -41,7 +41,6 @@ model Wine {
   typeId          Int
   results         Result[]
   characteristics Characteristic[]
-  foods           Food[]
 }
 
 model Characteristic {
@@ -60,11 +59,8 @@ model Characteristic {
 }
 
 model Food {
-  id     Int     @id @default(autoincrement())
-  wineId Int
-  name   String?
-
-  wine Wine @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  id   Int     @id @default(autoincrement())
+  name String?
 }
 
 model Survey {
