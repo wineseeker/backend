@@ -34,18 +34,18 @@ model Result {
 }
 
 model Wine {
-  id             Int      @id @default(autoincrement())
-  name           String?
-  rating_count   Int
-  rating_average Float
-  type_id        Int
-  results        Result[]
-  sweetness      Float
-  alcohol        Float
-  tannin         Float
-  body           Float
-  acidity        Float
-  country_code   String
+  id            Int      @id @default(autoincrement())
+  name          String?
+  ratingCount   Int      @map("rating_count")
+  ratingAverage Float    @map("rating_average")
+  typeId        Int      @map("type_id")
+  results       Result[]
+  sweetness     Float
+  alcohol       Float
+  tannin        Float
+  body          Float
+  acidity       Float
+  countryCode   String   @map("country_code")
 }
 
 model Food {
