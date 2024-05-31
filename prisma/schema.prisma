@@ -34,23 +34,35 @@ model Result {
 }
 
 model Wine {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   name          String?
-  ratingCount   Int      @map("rating_count")
-  ratingAverage Float    @map("rating_average")
-  typeId        Int      @map("type_id")
+  ratingCount   Int        @map("rating_count")
+  ratingAverage Float      @map("rating_average")
+  typeId        Int        @map("type_id")
   results       Result[]
   sweetness     Float
   alcohol       Float
   tannin        Float
   body          Float
   acidity       Float
-  countryCode   String   @map("country_code")
+  countryCode   String     @map("country_code")
+  WineFood      WineFood[]
+}
+
+model WineFood {
+  wine   Wine @relation(fields: [wineId], references: [id])
+  wineId Int  @map("wine_id")
+  food   Food @relation(fields: [foodId], references: [id])
+  foodId Int  @map("food_id")
+
+  @@id([wineId, foodId])
+  @@map("wine_food")
 }
 
 model Food {
-  id   Int    @id @default(autoincrement())
-  name String
+  id       Int        @id @default(autoincrement())
+  name     String
+  WineFood WineFood[]
 }
 
 model Survey {
