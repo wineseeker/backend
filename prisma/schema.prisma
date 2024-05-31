@@ -24,29 +24,38 @@ model Session {
 }
 
 model Result {
-  id      Int    @id @default(autoincrement())
-  userId  String
-  wineId  Int
-  clicked Int
+  id      Int          @id @default(autoincrement())
+  userId  String?      @map("user_id")
+  clicked Int?
+  wine    ResultWine[]
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  wine Wine @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ResultWine {
+  result   Result @relation(fields: [resultId], references: [id])
+  resultId Int    @map("result_id")
+  wine     Wine   @relation(fields: [wineId], references: [id])
+  wineId   Int    @map("wine_id")
+
+  @@id([resultId, wineId])
+  @@map("result_wine")
 }
 
 model Wine {
-  id            Int        @id @default(autoincrement())
-  name          String?
-  ratingCount   Int        @map("rating_count")
-  ratingAverage Float      @map("rating_average")
-  typeId        Int        @map("type_id")
-  results       Result[]
-  sweetness     Float
-  alcohol       Float
-  tannin        Float
-  body          Float
-  acidity       Float
-  countryCode   String     @map("country_code")
-  WineFood      WineFood[]
+  id              Int          @id @default(autoincrement())
+  name            String
+  ratingCount     Int          @map("rating_count")
+  ratingAverage   Float        @map("rating_average")
+  typeId          Int          @map("type_id")
+  sweetness       Float
+  alcohol         Float
+  tannin          Float
+  body            Float
+  acidity         Float
+  countryCode     String       @map("country_code")
+  food            WineFood[]
+  recommendations ResultWine[]
 }
 
 model WineFood {
