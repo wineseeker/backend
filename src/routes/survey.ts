@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { createSurvey } from '../controllers/survey-controller.js';
+import {recommend} from '../controllers/survey-controller.js';
 
 const router = Router();
 
-router.post('/survey', createSurvey);
+router.post('/', recommend);
 
 export default router;

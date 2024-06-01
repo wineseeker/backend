@@ -32,8 +32,7 @@ app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/signup', signupRouter);
 app.use('/account', accountRouter);
-app.use('/api', surveyRouter);
-app.use('/admin', adminRouter);
+app.use('/survey', surveyRouter);
 // cors
 app.use(cors());
 //swagger
