@@ -39,8 +39,6 @@ export async function recommend(req: Request, res: Response) {
             }
         });
 
-        console.log(`filteredWines.length: ${filteredWines.length}`);
-
         if (filteredWines.length <= 0) {
             return res.status(204).send();
         }
