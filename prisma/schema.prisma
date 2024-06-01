@@ -47,6 +47,7 @@ model Wines {
   name            String
   ratingCount     Int          @map("rating_count")
   ratingAverage   Float        @map("rating_average")
+  type            WineTypes    @relation(fields: [typeId], references: [id])
   typeId          Int          @map("type_id")
   sweetness       Float
   alcohol         Float
@@ -99,6 +100,14 @@ model Survey {
   acidity   Float
   sweetness Float
   tannin    Float
+}
+
+model WineTypes {
+  id   Int     @id @default(autoincrement())
+  type String
+  wine Wines[]
+
+  @@map("wine_types")
 }
 
 enum Role {
