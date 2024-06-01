@@ -103,9 +103,9 @@ model Survey {
 }
 
 model WineTypes {
-  id   Int     @id @default(autoincrement())
-  type String
-  wine Wines[]
+  id    Int     @id @default(autoincrement())
+  type  String
+  wines Wines[]
 
   @@map("wine_types")
 }
