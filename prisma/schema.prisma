@@ -35,14 +35,14 @@ model Result {
 model ResultWine {
   result   Result @relation(fields: [resultId], references: [id])
   resultId Int    @map("result_id")
-  wine     Wine   @relation(fields: [wineId], references: [id])
+  wine     Wines  @relation(fields: [wineId], references: [id])
   wineId   Int    @map("wine_id")
 
   @@id([resultId, wineId])
   @@map("result_wine")
 }
 
-model Wine {
+model Wines {
   id              Int          @id @default(autoincrement())
   name            String
   ratingCount     Int          @map("rating_count")
@@ -60,10 +60,10 @@ model Wine {
 }
 
 model WineFood {
-  wine   Wine @relation(fields: [wineId], references: [id])
-  wineId Int  @map("wine_id")
-  food   Food @relation(fields: [foodId], references: [id])
-  foodId Int  @map("food_id")
+  wine   Wines @relation(fields: [wineId], references: [id])
+  wineId Int   @map("wine_id")
+  food   Food  @relation(fields: [foodId], references: [id])
+  foodId Int   @map("food_id")
 
   @@id([wineId, foodId])
   @@map("wine_food")
@@ -76,7 +76,7 @@ model Food {
 }
 
 model WineGrapes {
-  wine     Wine   @relation(fields: [wineId], references: [id])
+  wine     Wines  @relation(fields: [wineId], references: [id])
   wineId   Int    @map("wine_id")
   grapes   Grapes @relation(fields: [grapesId], references: [id])
   grapesId Int    @map("grape_id")
