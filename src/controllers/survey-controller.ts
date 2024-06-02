@@ -72,7 +72,7 @@ export async function recommend(req: Request, res: Response) {
         // 예측된 선호도에 따라 와인을 정렬하고 상위 10개를 선택
         const top10Wines = predictedWines.sort((a, b) => b.predicted_like - a.predicted_like).slice(0, 10);
 
-        const result = await prisma.result.create({
+        const result = await prisma.results.create({
             data: {
                 clicked: 0, // 여기서는 클릭수를 0으로 초기화합니다. 필요에 따라 변경하세요.
                 wine: {
@@ -80,7 +80,8 @@ export async function recommend(req: Request, res: Response) {
                         wineId: wine.id
                     }))
                 },
-                userId: userId
+                userId: userId,
+                dateTime: new Date().toISOString(),
             },
             include: {
                 wine: true,

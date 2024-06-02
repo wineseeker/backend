@@ -13,7 +13,7 @@ model User {
   password_hash String
   role          Role      @default(USER)
   sessions      Session[]
-  results       Result[]
+  results       Results[]
 }
 
 model Session {
@@ -23,7 +23,7 @@ model Session {
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
-model Result {
+model Results {
   id       Int          @id @default(autoincrement())
   dateTime DateTime     @map("datetime")
   userId   String?      @map("user_id")
@@ -34,10 +34,10 @@ model Result {
 }
 
 model ResultWine {
-  result   Result @relation(fields: [resultId], references: [id])
-  resultId Int    @map("result_id")
-  wine     Wines  @relation(fields: [wineId], references: [id])
-  wineId   Int    @map("wine_id")
+  result   Results @relation(fields: [resultId], references: [id])
+  resultId Int     @map("result_id")
+  wine     Wines   @relation(fields: [wineId], references: [id])
+  wineId   Int     @map("wine_id")
 
   @@id([resultId, wineId])
   @@map("result_wine")
