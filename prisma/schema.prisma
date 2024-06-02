@@ -38,6 +38,7 @@ model ResultWine {
   resultId Int     @map("result_id")
   wine     Wines   @relation(fields: [wineId], references: [id])
   wineId   Int     @map("wine_id")
+  rank     Int
 
   @@id([resultId, wineId])
   @@map("result_wine")
