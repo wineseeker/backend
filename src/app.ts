@@ -15,7 +15,7 @@ import signupRouter from './routes/signup.js'
 import loginRouter from './routes/login.js'
 import accountRouter from './routes/account.js'
 import surveyRouter from './routes/survey.js';
-import adminRouter from './routes/admin.js';
+import resultRouter from './routes/result.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -33,6 +33,7 @@ app.use('/login', loginRouter);
 app.use('/signup', signupRouter);
 app.use('/account', accountRouter);
 app.use('/survey', surveyRouter);
+app.use('/result', resultRouter);
 // cors
 app.use(cors());
 //swagger
