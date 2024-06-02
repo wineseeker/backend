@@ -28,7 +28,7 @@ model Results {
   dateTime DateTime     @map("datetime")
   userId   String?      @map("user_id")
   clicked  Int?
-  wine     ResultWine[]
+  wines    ResultWine[]
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
