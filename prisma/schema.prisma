@@ -24,10 +24,11 @@ model Session {
 }
 
 model Result {
-  id      Int          @id @default(autoincrement())
-  userId  String?      @map("user_id")
-  clicked Int?
-  wine    ResultWine[]
+  id       Int          @id @default(autoincrement())
+  dateTime DateTime     @map("datetime")
+  userId   String?      @map("user_id")
+  clicked  Int?
+  wine     ResultWine[]
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
