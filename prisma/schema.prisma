@@ -25,7 +25,7 @@ model Session {
 
 model Results {
   id       Int          @id @default(autoincrement())
-  dateTime DateTime     @map("datetime")
+  dateTime DateTime     @default(now()) @map("datetime")
   userId   String?      @map("user_id")
   clicked  Int?
   wines    ResultWine[]
