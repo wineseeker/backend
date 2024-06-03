@@ -14,6 +14,8 @@ model User {
   role          Role      @default(USER)
   sessions      Session[]
   results       Results[]
+
+  @@index([email])
 }
 
 model Session {
