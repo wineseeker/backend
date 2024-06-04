@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { createDeepFmModel } from "../lib/create-deepfm-model.js";
 import { preprocessData } from "../lib/preprocess-data.js";
-import * as tf from '@tensorflow/tfjs-node';
 import {lucia} from "../lib/lucia-auth.js";
 import {getSurveyResult} from "../lib/get-survey-result.js";
 
@@ -21,9 +20,12 @@ export async function recommend(req: Request, res: Response) {
     }
 
     try {
-        const [ wineTypeId, characteristic ] = req.body;
+        const characteristic = req.body[1];
+        let wineTypeId = req.body[0];
 
-        if (!wineTypeId || !characteristic) {
+        wineTypeId = Number(wineTypeId);
+
+        if (!wineTypeId || !characteristic || isNaN(wineTypeId)) {
             return res.status(400).json({ msg: "Invalid request body" });
         }
 
@@ -49,10 +51,7 @@ export async function recommend(req: Request, res: Response) {
 
         if (filteredWines.length > 2) {
             const deepFMModel = createDeepFmModel(filteredWines.length);
-            const {trainData, trainLabels, testData, testLabels} = preprocessData(filteredWines);
-
-            // trainLabels의 형태를 올바르게 조정합니다.
-            const reshapedTrainLabels = tf.reshape(trainLabels, [trainLabels.shape[0], 1]);
+            const { testData, testLabels} = preprocessData(filteredWines);
 
             // 테스트 데이터에 대한 예측 값을 추출하여 배열로 변환합니다.
             const predictionsArray: any[] = [];
