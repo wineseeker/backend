@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
 }
 
 datasource db {
@@ -62,6 +63,8 @@ model Wines {
   food            WineFood[]
   grapes          WineGrapes[]
   recommendations ResultWine[]
+
+  @@fulltext([name])
 }
 
 model WineFood {
