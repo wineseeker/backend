@@ -30,7 +30,6 @@ model Results {
   id       Int          @id @default(autoincrement())
   dateTime DateTime     @default(now()) @map("datetime")
   userId   String?      @map("user_id")
-  clicked  Int?
   wines    ResultWine[]
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -97,16 +96,6 @@ model Grapes {
   id         Int          @id @default(autoincrement())
   name       String
   WineGrapes WineGrapes[]
-}
-
-model Survey {
-  id        Int   @id @default(autoincrement())
-  wine_type Int
-  body      Float
-  alcohol   Float
-  acidity   Float
-  sweetness Float
-  tannin    Float
 }
 
 model WineTypes {
