@@ -6,14 +6,20 @@ import * as tf from '@tensorflow/tfjs-node'
  * @returns DeepFM 모델을 리턴합니다
  */
 export function createDeepFmModel(row) {
+    let inputDim = row - 2
+
     // DeepFM 모델 정의
     const input = tf.input({ shape: [6] });
 
     // 선형 부분
     const linearPart = tf.layers.dense({ units: 1, useBias: false }).apply(input);
 
+    if (inputDim <= 0) {
+        inputDim = row
+    }
+
     // FM 부분
-    const embedding= tf.layers.embedding({ inputDim: row - 2, outputDim: 4 }).apply(input);
+    const embedding= tf.layers.embedding({ inputDim: inputDim, outputDim: 4 }).apply(input);
     const fmPart = tf.layers.dot({ axes: -1 }).apply([embedding, embedding]);
 
     // DNN 부분

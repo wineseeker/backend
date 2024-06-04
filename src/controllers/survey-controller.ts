@@ -44,50 +44,71 @@ export async function recommend(req: Request, res: Response) {
             return res.status(204).send();
         }
 
-        const deepFMModel = createDeepFmModel(filteredWines.length);
-        const { trainData, trainLabels, testData, testLabels } = preprocessData(filteredWines);
+        let top10Wines:any[] = []
+        let result
 
-        // trainLabels의 형태를 올바르게 조정합니다.
-        const reshapedTrainLabels = tf.reshape(trainLabels, [trainLabels.shape[0], 1]);
+        if (filteredWines.length > 2) {
+            const deepFMModel = createDeepFmModel(filteredWines.length);
+            const {trainData, trainLabels, testData, testLabels} = preprocessData(filteredWines);
 
-        // 테스트 데이터에 대한 예측 값을 추출하여 배열로 변환합니다.
-        const predictionsArray: any[] = [];
-        for (let i = 0; i < testData.shape[0]; i++) {
-            const input = testData.slice([i, 0], [1, testData.shape[1]]);
-            const prediction = deepFMModel.predict(input);
-            let predictionValue;
-            if (Array.isArray(prediction)) {
-                predictionValue = prediction[0].dataSync()[0];
-            } else {
-                predictionValue = prediction.dataSync()[0];
+            // trainLabels의 형태를 올바르게 조정합니다.
+            const reshapedTrainLabels = tf.reshape(trainLabels, [trainLabels.shape[0], 1]);
+
+            // 테스트 데이터에 대한 예측 값을 추출하여 배열로 변환합니다.
+            const predictionsArray: any[] = [];
+            for (let i = 0; i < testData.shape[0]; i++) {
+                const input = testData.slice([i, 0], [1, testData.shape[1]]);
+                const prediction = deepFMModel.predict(input);
+                let predictionValue;
+                if (Array.isArray(prediction)) {
+                    predictionValue = prediction[0].dataSync()[0];
+                } else {
+                    predictionValue = prediction.dataSync()[0];
+                }
+                predictionsArray.push(predictionValue);
             }
-            predictionsArray.push(predictionValue);
-        }
 
-        // 예측된 와인 목록 생성 및 정렬
-        const predictedWines = testLabels.arraySync().map((label, index) => ({
-            ...filteredWines[index], // 인덱스를 사용하여 원래의 와인 데이터와 매핑
-            predicted_like: predictionsArray[index]
-        }));
+            // 예측된 와인 목록 생성 및 정렬
+            const predictedWines = testLabels.arraySync().map((label, index) => ({
+                ...filteredWines[index], // 인덱스를 사용하여 원래의 와인 데이터와 매핑
+                predicted_like: predictionsArray[index]
+            }));
 
-        // 예측된 선호도에 따라 와인을 정렬하고 상위 10개를 선택
-        const top10Wines = predictedWines.sort((a, b) => b.predicted_like - a.predicted_like).slice(0, 10);
+            // 예측된 선호도에 따라 와인을 정렬하고 상위 10개를 선택
+            top10Wines = predictedWines.sort((a, b) => b.predicted_like - a.predicted_like).slice(0, 10);
 
-        const result = await prisma.results.create({
-            data: {
-                clicked: 0, // 여기서는 클릭수를 0으로 초기화합니다. 필요에 따라 변경하세요.
-                wines: {
-                    create: top10Wines.map((wine, index) => ({
-                        wineId: wine.id,
-                        rank: index + 1,
-                    }))
+            result = await prisma.results.create({
+                data: {
+                    clicked: 0, // 여기서는 클릭수를 0으로 초기화합니다. 필요에 따라 변경하세요.
+                    wines: {
+                        create: top10Wines.map((wine, index) => ({
+                            wineId: wine.id,
+                            rank: index + 1,
+                        }))
+                    },
+                    userId: userId
                 },
-                userId: userId
-            },
-            include: {
-                wines: true,
-            }
-        });
+                include: {
+                    wines: true,
+                }
+            });
+        } else {
+            result = await prisma.results.create({
+                data: {
+                    clicked: 0, // 여기서는 클릭수를 0으로 초기화합니다. 필요에 따라 변경하세요.
+                    wines: {
+                        create: {
+                            wineId: filteredWines[0].id,
+                            rank: 1,
+                        }
+                    },
+                    userId: userId
+                },
+                include: {
+                    wines: true,
+                }
+            });
+        }
 
         const body= {
             resultId: result.id,
