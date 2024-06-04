@@ -78,7 +78,6 @@ export async function recommend(req: Request, res: Response) {
 
             result = await prisma.results.create({
                 data: {
-                    clicked: 0, // 여기서는 클릭수를 0으로 초기화합니다. 필요에 따라 변경하세요.
                     wines: {
                         create: top10Wines.map((wine, index) => ({
                             wineId: wine.id,
