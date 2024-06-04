@@ -4,6 +4,7 @@ import { createDeepFmModel } from "../lib/create-deepfm-model.js";
 import { preprocessData } from "../lib/preprocess-data.js";
 import * as tf from '@tensorflow/tfjs-node';
 import {lucia} from "../lib/lucia-auth.js";
+import {getSurveyResult} from "../lib/get-survey-result.js";
 
 const prisma = new PrismaClient();
 
@@ -88,7 +89,12 @@ export async function recommend(req: Request, res: Response) {
             }
         });
 
-        res.json({resultId: result.id});
+        const body= {
+            resultId: result.id,
+            result: await getSurveyResult(result.id)
+        }
+
+        res.json(body);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
