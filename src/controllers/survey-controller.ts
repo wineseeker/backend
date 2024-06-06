@@ -42,14 +42,15 @@ export async function recommend(req: Request, res: Response) {
             }
         });
 
+        console.log("filteredWines.length: " + filteredWines.length);
+
         if (filteredWines.length <= 0) {
             return res.status(204).send();
         }
 
-        let top10Wines:any[] = []
         let result
 
-        if (filteredWines.length > 2) {
+        if (filteredWines.length > 11) {
             const deepFMModel = createDeepFmModel(filteredWines.length);
             const { testData, testLabels} = preprocessData(filteredWines);
 
@@ -74,7 +75,7 @@ export async function recommend(req: Request, res: Response) {
             }));
 
             // 예측된 선호도에 따라 와인을 정렬하고 상위 10개를 선택
-            top10Wines = predictedWines.sort((a, b) => b.predicted_like - a.predicted_like).slice(0, 10);
+            const top10Wines = predictedWines.sort((a, b) => b.predicted_like - a.predicted_like).slice(0, 10);
 
             result = await prisma.results.create({
                 data: {
@@ -93,12 +94,16 @@ export async function recommend(req: Request, res: Response) {
         } else {
             result = await prisma.results.create({
                 data: {
-                    clicked: 0, // 여기서는 클릭수를 0으로 초기화합니다. 필요에 따라 변경하세요.
                     wines: {
-                        create: {
-                            wineId: filteredWines[0].id,
-                            rank: 1,
-                        }
+                        create: filteredWines.sort((a, b) => {
+                            if (b.ratingAverage === a.ratingAverage) {
+                                return b.ratingCount - a.ratingCount;
+                            }
+                            return b.ratingAverage - a.ratingAverage;
+                        }).map((wine, index) => ({
+                            wineId: wine.id,
+                            rank: index + 1,
+                        }))
                     },
                     userId: userId
                 },
@@ -110,7 +115,11 @@ export async function recommend(req: Request, res: Response) {
 
         const body= {
             resultId: result.id,
-            result: await getSurveyResult(result.id)
+            result: await getSurveyResult(result.id).then(
+                (result) => (
+                    result?.wines.map((item) => (item.wine))
+                )
+            )
         }
 
         res.json(body);
