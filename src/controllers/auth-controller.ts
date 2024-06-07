@@ -4,6 +4,8 @@ import { verify, hash } from '@node-rs/argon2';
 import { lucia } from '../lib/lucia-auth.js';
 import { isValidEmail } from '../lib/is-vaild-email.js';
 import { generateIdFromEntropySize } from 'lucia';
+import {generateEmailVerificationCode} from "../lib/generate-email-verification-code.js";
+import {sendVerificationCode} from "../lib/send-verification-code.js";
 
 const prisma = new PrismaClient();
 
@@ -72,9 +74,11 @@ export const signup = async (req: Request, res: Response) => {
                 id: userId,
                 email,
                 password_hash: passwordHash,
-                role: role || 'USER' // 기본 역할 설정
             }
         });
+
+        const verificationCode = await generateEmailVerificationCode(userId, email);
+        await sendVerificationCode(email, verificationCode);
 
         const session = await lucia.createSession(user.id, {});
         return res.status(201).json(session);
