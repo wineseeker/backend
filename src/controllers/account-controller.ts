@@ -5,8 +5,26 @@ import { lucia } from '../lib/lucia-auth.js';
 import {generateEmailVerificationCode} from "../lib/generate-email-verification-code.js";
 import {sendVerificationCode} from "../lib/send-verification-code.js";
 import {hash, verify} from "@node-rs/argon2";
+import {generateIdFromEntropySize} from "lucia";
 
 const prisma = new PrismaClient();
+
+async function validPassword(userId: string, userPassword: string) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (user === null) {
+        return null
+    }
+
+    return await verify(user.password_hash, userPassword, {
+        memoryCost: 19456,
+        timeCost: 2,
+        outputLen: 32,
+        parallelism: 1
+    });
+}
 
 export const getUserInfo = async (req: Request, res: Response) => {
     const user = res.locals.user
@@ -90,14 +108,10 @@ export const changePassword = async (req: Request, res: Response) => {
         return res.status(401).json({ msg: "Not logged in" });
     }
 
-    const validPassword = await verify(user.password_hash, password, {
-        memoryCost: 19456,
-        timeCost: 2,
-        outputLen: 32,
-        parallelism: 1
-    });
-
-    if (!validPassword) {
+    const matchPassword = await validPassword(userId, password)
+    if (matchPassword === null) {
+        return res.status(401).json({ msg: "Not logged in" });
+    } else if (!matchPassword) {
         return res.status(400).json({ code: 1, msg: "Invalid password" });
     }
 
@@ -138,3 +152,44 @@ export const logout = async (req: Request, res: Response) => {
     await lucia.invalidateSession(res.locals.session.id);
     res.status(200).json({ msg: "Logged out" });
 };
+
+export const deleteAccount = async (req: Request, res: Response) => {
+    const userId = res.locals.user.id
+    const password = req.body.password
+
+    const matchPassword = await validPassword(userId, password)
+    if (matchPassword === null) {
+        return res.status(401).json({ msg: "Not logged in" });
+    } else if (!matchPassword) {
+        return res.status(400).json({ code: 1, msg: "Invalid password" });
+    }
+
+    try {
+        const passwordHash = await hash(generateIdFromEntropySize(40), {
+            memoryCost: 19456,
+            timeCost: 2,
+            outputLen: 32,
+            parallelism: 1
+        });
+
+        await prisma.user.update({
+            data: {
+                leaved: true,
+                leavedAt: new Date(),
+                email: null,
+                password_hash: passwordHash,
+                emailVerified: false
+            },
+            where: {
+                id: userId
+            }
+        })
+
+        await lucia.invalidateUserSessions(userId);
+
+        res.status(204).send()
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Internal server error")
+    }
+}

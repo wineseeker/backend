@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-    changePassword,
+    changePassword, deleteAccount,
     emailVerification,
     getUserInfo,
     logout,
@@ -13,6 +13,7 @@ const router = Router();
 router.use(validateSession);
 
 router.get("/", getUserInfo);
+router.delete("/", deleteAccount)
 
 router.post("/email-verification", emailVerification)
 
