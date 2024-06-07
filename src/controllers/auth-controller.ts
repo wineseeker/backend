@@ -45,7 +45,7 @@ export const login = async (req: Request, res: Response) => {
 
 // 회원가입 로직
 export const signup = async (req: Request, res: Response) => {
-    const { email, password, retypePw, role } = req.body;
+    const { email, password, retypePw } = req.body;
     if (!email || typeof email !== "string" || !isValidEmail(email)) {
         console.error("Invalid email");
         return res.status(400).json({ code: 1, msg: "Invalid email" });

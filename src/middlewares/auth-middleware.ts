@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { lucia } from '../lib/lucia-auth.js';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export const validateSession = async (req: Request, res: Response, next: NextFunction) => {
     const sessionId = lucia.readBearerToken(req.headers.authorization?.toString() ?? "");
