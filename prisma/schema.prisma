@@ -10,12 +10,12 @@ datasource db {
 
 model User {
   id            String    @id
-  email         String?   @unique
+  email         String    @unique
   password_hash String
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime  @default(now()) @map("created_at")
   emailVerified Boolean   @default(false) @map("email_verified")
   leaved        Boolean   @default(false)
-  leavedAt      DateTime?
+  leavedAt      DateTime? @map("leaved_at")
   sessions      Session[]
   results       Results[]
 
