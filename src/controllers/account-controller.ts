@@ -2,27 +2,21 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { isWithinExpirationDate } from "oslo";
 import { lucia } from '../lib/lucia-auth.js';
+import {generateEmailVerificationCode} from "../lib/generate-email-verification-code.js";
+import {sendVerificationCode} from "../lib/send-verification-code.js";
 
 const prisma = new PrismaClient();
 
 export const getUserInfo = async (req: Request, res: Response) => {
-    const userInfo = await prisma.user.findUnique({
-        where: {
-            id: res.locals.user.id,
-        },
-        select: {
-            email: true,
-            emailVerified: true,
-        },
-    });
+    const user = res.locals.user
 
-    if (userInfo === null || userInfo === undefined) {
+    if (user === null || user === undefined) {
         return res.status(401).json({ msg: "Not logged in" });
     }
 
     res.json({
-        email: userInfo.email,
-        emailVerified: userInfo.emailVerified,
+        email: user.email,
+        emailVerified: user.emailVerified,
         session: res.locals.session,
     });
 };
@@ -64,6 +58,20 @@ export const emailVerification = async (req: Request, res: Response) => {
     })
 
     res.status(200).json({ msg: "OK" });
+}
+
+export const verificationEmailResend = async (req: Request, res: Response) => {
+    const userId = res.locals.user.id
+    const email = res.locals.user.email
+
+    try {
+        const verificationCode = await generateEmailVerificationCode(userId, email);
+        await sendVerificationCode(email, verificationCode);
+        res.status(204).send()
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ msg: "Internal error" });
+    }
 }
 
 export const logout = async (req: Request, res: Response) => {
