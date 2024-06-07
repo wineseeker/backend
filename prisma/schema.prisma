@@ -12,7 +12,7 @@ model User {
   id            String    @id
   email         String    @unique
   password_hash String
-  role          Role      @default(USER)
+  emailVerified Boolean   @default(false) @map("email_verified")
   sessions      Session[]
   results       Results[]
 
@@ -104,9 +104,4 @@ model WineTypes {
   wines Wines[]
 
   @@map("wine_types")
-}
-
-enum Role {
-  USER
-  ADMIN
 }
