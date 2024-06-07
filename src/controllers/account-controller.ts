@@ -148,6 +148,42 @@ export const changePassword = async (req: Request, res: Response) => {
     }
 }
 
+export const getRecommendHistory = async (req: Request, res: Response) => {
+    const userId: string = res.locals.user.id.toString()
+    const cursorId = Number(req.query.cursorId)
+
+    try {
+        const args: any = {
+            take: 20,
+            select: {
+                id: true,
+                dateTime: true
+            },
+            where: {
+                userId: userId
+            },
+            orderBy: {
+                id: 'asc',
+            }
+
+        }
+
+        if (!isNaN(cursorId)) {
+            args.skip = 1
+            args.cursor = {
+                id: cursorId
+            }
+        }
+
+        const results = await prisma.results.findMany(args)
+
+        res.status(200).json(results)
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Internal server error")
+    }
+}
+
 export const logout = async (req: Request, res: Response) => {
     await lucia.invalidateSession(res.locals.session.id);
     res.status(200).json({ msg: "Logged out" });
