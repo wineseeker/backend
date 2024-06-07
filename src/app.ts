@@ -17,6 +17,7 @@ import accountRouter from './routes/account.js'
 import surveyRouter from './routes/survey.js';
 import resultRouter from './routes/result.js';
 import wineRouter from './routes/wine.js';
+import searchRouter from './routes/search.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -36,8 +37,7 @@ app.use('/account', accountRouter);
 app.use('/survey', surveyRouter);
 app.use('/result', resultRouter);
 app.use('/wine', wineRouter)
-// cors
-app.use(cors());
+app.use('/search', searchRouter)
 //swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
