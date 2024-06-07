@@ -26,6 +26,16 @@ model Session {
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
+model EmailVerificationCode {
+  id        Int      @id @default(autoincrement())
+  code      String
+  userId    String   @unique @map("user_id")
+  email     String
+  expiresAt DateTime @map("expires_at")
+
+  @@map("email_verification_code")
+}
+
 model Results {
   id       Int          @id @default(autoincrement())
   dateTime DateTime     @default(now()) @map("datetime")
