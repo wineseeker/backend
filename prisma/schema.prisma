@@ -8,15 +8,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  email         String?   @unique
-  password_hash String
-  createdAt     DateTime  @default(now()) @map("created_at")
-  emailVerified Boolean   @default(false) @map("email_verified")
-  leaved        Boolean   @default(false)
-  leavedAt      DateTime? @map("leaved_at")
-  sessions      Session[]
-  results       Results[]
+  id                     String                   @id
+  email                  String?                  @unique
+  password_hash          String
+  createdAt              DateTime                 @default(now()) @map("created_at")
+  emailVerified          Boolean                  @default(false) @map("email_verified")
+  leaved                 Boolean                  @default(false)
+  leavedAt               DateTime?                @map("leaved_at")
+  sessions               Session[]
+  results                Results[]
+  emailVerificationCodes EmailVerificationCodes[]
+  PasswordResetTokens    PasswordResetTokens[]
 
   @@index([email])
 }
@@ -28,19 +30,21 @@ model Session {
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
-model EmailVerificationCode {
+model EmailVerificationCodes {
   id        Int      @id @default(autoincrement())
   code      String
   userId    String   @unique @map("user_id")
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
   email     String
   expiresAt DateTime @map("expires_at")
 
-  @@map("email_verification_code")
+  @@map("email_verification_codes")
 }
 
 model PasswordResetTokens {
   tokenHash String   @id
   userId    String   @map("user_id")
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
   expiresAt DateTime @map("expires_at")
 
   @@map("password_reset_tokens")
