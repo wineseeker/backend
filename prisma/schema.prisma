@@ -38,6 +38,12 @@ model EmailVerificationCode {
   @@map("email_verification_code")
 }
 
+model PasswordResetTokens {
+  tokenHash String   @id
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+}
+
 model Results {
   id       Int          @id @default(autoincrement())
   dateTime DateTime     @default(now()) @map("datetime")
