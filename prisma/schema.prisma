@@ -42,6 +42,8 @@ model PasswordResetTokens {
   tokenHash String   @id
   userId    String   @map("user_id")
   expiresAt DateTime @map("expires_at")
+
+  @@map("password_reset_tokens")
 }
 
 model Results {
