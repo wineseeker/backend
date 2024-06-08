@@ -42,10 +42,11 @@ model EmailVerificationCodes {
 }
 
 model PasswordResetTokens {
-  tokenHash String   @id
-  userId    String   @map("user_id")
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
-  expiresAt DateTime @map("expires_at")
+  tokenHash      String   @id
+  userId         String   @map("user_id")
+  user           User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  emailChangeReq Boolean  @default(false) @map("email_change_req")
+  expiresAt      DateTime @map("expires_at")
 
   @@map("password_reset_tokens")
 }
