@@ -5,14 +5,14 @@ import { generateRandomString, alphabet } from "oslo/crypto";
 const prisma = new PrismaClient()
 
 export async function generateEmailVerificationCode(userId: string, email: string): Promise<string> {
-    const existedEmailVerificationCode = await prisma.emailVerificationCode.count({
+    const existedEmailVerificationCode = await prisma.emailVerificationCodes.count({
         where: {
              userId: userId
          }
     })
 
     if (existedEmailVerificationCode > 0) {
-        await prisma.emailVerificationCode.delete({
+        await prisma.emailVerificationCodes.delete({
             where: {
                 userId: userId
             }
@@ -21,7 +21,7 @@ export async function generateEmailVerificationCode(userId: string, email: strin
     
     const code = generateRandomString(8, alphabet("0-9"));
 
-    await prisma.emailVerificationCode.create({
+    await prisma.emailVerificationCodes.create({
         data: {
             userId,
             email,

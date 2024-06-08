@@ -47,7 +47,7 @@ export const emailVerification = async (req: Request, res: Response) => {
         return res.status(400).json({ msg: "Invalid code" });
     }
 
-    const dbCode = await prisma.emailVerificationCode.findUnique({
+    const dbCode = await prisma.emailVerificationCodes.findUnique({
         where: {
             userId: user.id
         }
@@ -57,7 +57,7 @@ export const emailVerification = async (req: Request, res: Response) => {
         return res.status(400).json({ msg: "Invalid code" });
     }
 
-    await prisma.emailVerificationCode.delete({
+    await prisma.emailVerificationCodes.delete({
         where: {
             id: dbCode.id
         }
