@@ -6,6 +6,7 @@ import {generateEmailVerificationCode} from "../lib/generate-email-verification-
 import {sendVerificationCode} from "../lib/send-verification-code.js";
 import {hash, verify} from "@node-rs/argon2";
 import {generateIdFromEntropySize} from "lucia";
+import {isValidEmail} from "../lib/is-vaild-email.js";
 
 const prisma = new PrismaClient();
 
@@ -67,6 +68,20 @@ export const emailVerification = async (req: Request, res: Response) => {
         return res.status(400).json({ msg: "Expired code" });
     }
 
+    if (user.id !== dbCode.userId)
+        return res.status(400).json({ msg: "Invalid code" });
+
+    if (user.email !== dbCode.email) {
+        await prisma.user.update({
+            data: {
+                email: dbCode.email
+            },
+            where: {
+                id: user.id
+            }
+        })
+    }
+
     await prisma.user.update({
         data: {
             emailVerified: true,
@@ -86,6 +101,45 @@ export const verificationEmailResend = async (req: Request, res: Response) => {
     try {
         const verificationCode = await generateEmailVerificationCode(userId, email);
         await sendVerificationCode(email, verificationCode);
+        res.status(204).send()
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ msg: "Internal error" });
+    }
+}
+
+export const requestEmailChange = async (req: Request, res: Response) => {
+    const userId = res.locals.user.id
+    const newEmail = req.body.newEmail
+    const password = req.body.password
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+    })
+
+    if (!user) {
+        return res.status(400).json({ code: -1, msg: "Invalid request" });
+    }
+
+    const validPassword = await verify(user.password_hash, password, {
+        memoryCost: 19456,
+        timeCost: 2,
+        outputLen: 32,
+        parallelism: 1
+    });
+
+    if (!validPassword) {
+        return res.status(400).json({ code: 1, msg: "Invalid password" });
+    }
+
+    if (!newEmail || typeof newEmail !== "string" || !isValidEmail(newEmail)) {
+        console.error("Invalid email");
+        return res.status(400).json({ code: 2, msg: "Invalid email" });
+    }
+
+    try {
+        const verificationCode = await generateEmailVerificationCode(userId, newEmail);
+        await sendVerificationCode(newEmail, verificationCode);
         res.status(204).send()
     } catch (e) {
         console.error(e);

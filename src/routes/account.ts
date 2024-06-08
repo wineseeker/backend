@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+    requestEmailChange,
     changePassword, deleteAccount,
     emailVerification, getRecommendHistory,
     getUserInfo,
@@ -20,6 +21,8 @@ router.post("/email-verification", emailVerification)
 router.get("/verification-mail-resend", verificationEmailResend)
 
 router.patch("/password", changePassword)
+
+router.patch("/email", requestEmailChange)
 
 router.get("/logout", logout);
 
