@@ -21,6 +21,7 @@ model User {
   PasswordResetTokens    PasswordResetTokens[]
 
   @@index([email])
+  @@map("user")
 }
 
 model Session {
@@ -28,6 +29,8 @@ model Session {
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("session")
 }
 
 model EmailVerificationCodes {
@@ -87,6 +90,8 @@ model Wines {
   food            WineFood[]
   grapes          WineGrapes[]
   recommendations ResultWine[]
+
+  @@map("wines")
 }
 
 model WineFood {
@@ -103,6 +108,8 @@ model Food {
   id       Int        @id @default(autoincrement())
   name     String
   WineFood WineFood[]
+
+  @@map("food")
 }
 
 model WineGrapes {
