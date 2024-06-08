@@ -163,7 +163,7 @@ export const getRecommendHistory = async (req: Request, res: Response) => {
                 userId: userId
             },
             orderBy: {
-                id: 'asc',
+                id: 'desc',
             }
 
         }
