@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import {Prisma, PrismaClient} from '@prisma/client';
 import { verify, hash } from '@node-rs/argon2';
 import { lucia } from '../lib/lucia-auth.js';
 import { isValidEmail } from '../lib/is-vaild-email.js';
@@ -69,21 +69,31 @@ export const signup = async (req: Request, res: Response) => {
     const userId = generateIdFromEntropySize(10); // 16 characters long
 
     try {
-        const user = await prisma.user.create({
-            data: {
-                id: userId,
-                email,
-                password_hash: passwordHash,
-            }
-        });
+        await prisma.$transaction(async (tx) => {
+            const user = await prisma.user.create({
+                data: {
+                    id: userId,
+                    email,
+                    password_hash: passwordHash,
+                }
+            });
 
-        const verificationCode = await generateEmailVerificationCode(userId, email);
-        await sendVerificationCode(email, verificationCode);
+            const verificationCode = await generateEmailVerificationCode(userId, email, false);
+            await sendVerificationCode(email, verificationCode);
 
-        const session = await lucia.createSession(user.id, {});
-        return res.status(201).json(session);
-    } catch (error) {
-        console.error(error);
-        return res.status(400).json({ code: 4, msg: 'Email already used' });
+            const session = await lucia.createSession(user.id, {});
+            return res.status(201).json(session);
+        })
+    } catch (err) {
+        if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+            return res.status(400).json({ code: 4, msg: 'Email already used' });
+        } else {
+            await prisma.emailVerificationCodes.delete({
+                where: {
+                    userId: userId
+                }
+            })
+            return res.status(500).send("Internal error")
+        }
     }
 };

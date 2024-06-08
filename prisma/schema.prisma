@@ -31,22 +31,22 @@ model Session {
 }
 
 model EmailVerificationCodes {
-  id        Int      @id @default(autoincrement())
-  code      String
-  userId    String   @unique @map("user_id")
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
-  email     String
-  expiresAt DateTime @map("expires_at")
+  id             Int      @id @default(autoincrement())
+  code           String
+  userId         String   @unique @map("user_id")
+  user           User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  email          String
+  emailChangeReq Boolean  @default(false) @map("email_change_req")
+  expiresAt      DateTime @map("expires_at")
 
   @@map("email_verification_codes")
 }
 
 model PasswordResetTokens {
-  tokenHash      String   @id
-  userId         String   @map("user_id")
-  user           User     @relation(references: [id], fields: [userId], onDelete: Cascade)
-  emailChangeReq Boolean  @default(false) @map("email_change_req")
-  expiresAt      DateTime @map("expires_at")
+  tokenHash String   @id
+  userId    String   @map("user_id")
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
 
   @@map("password_reset_tokens")
 }
