@@ -61,6 +61,8 @@ model Results {
   wines    ResultWine[]
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("results")
 }
 
 model ResultWine {
@@ -126,6 +128,8 @@ model Grapes {
   id         Int          @id @default(autoincrement())
   name       String
   WineGrapes WineGrapes[]
+
+  @@map("grapes")
 }
 
 model WineTypes {
