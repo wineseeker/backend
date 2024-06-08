@@ -72,14 +72,18 @@ export const emailVerification = async (req: Request, res: Response) => {
         return res.status(400).json({ msg: "Invalid code" });
 
     if (user.email !== dbCode.email) {
-        await prisma.user.update({
-            data: {
-                email: dbCode.email
-            },
-            where: {
-                id: user.id
-            }
-        })
+        if (dbCode.emailChangeReq) {
+            await prisma.user.update({
+                data: {
+                    email: dbCode.email
+                },
+                where: {
+                    id: user.id
+                }
+            })
+        } else {
+            return res.status(400).json({ msg: "Invalid code" });
+        }
     }
 
     await prisma.user.update({
@@ -99,7 +103,7 @@ export const verificationEmailResend = async (req: Request, res: Response) => {
     const email = res.locals.user.email
 
     try {
-        const verificationCode = await generateEmailVerificationCode(userId, email);
+        const verificationCode = await generateEmailVerificationCode(userId, email, false);
         await sendVerificationCode(email, verificationCode);
         res.status(204).send()
     } catch (e) {
@@ -138,7 +142,7 @@ export const requestEmailChange = async (req: Request, res: Response) => {
     }
 
     try {
-        const verificationCode = await generateEmailVerificationCode(userId, newEmail);
+        const verificationCode = await generateEmailVerificationCode(userId, newEmail, true);
         await sendVerificationCode(newEmail, verificationCode);
         res.status(204).send()
     } catch (e) {

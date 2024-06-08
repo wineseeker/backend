@@ -4,7 +4,8 @@ import { generateRandomString, alphabet } from "oslo/crypto";
 
 const prisma = new PrismaClient()
 
-export async function generateEmailVerificationCode(userId: string, email: string): Promise<string> {
+export async function generateEmailVerificationCode(userId: string, email: string, emailChangeReq: boolean): Promise<string> {
+
     const existedEmailVerificationCode = await prisma.emailVerificationCodes.count({
         where: {
              userId: userId
@@ -26,7 +27,8 @@ export async function generateEmailVerificationCode(userId: string, email: strin
             userId,
             email,
             code,
-            expiresAt: createDate(new TimeSpan(15, "m")) // 15 minutes
+            expiresAt: createDate(new TimeSpan(15, "m")), // 15 minutes
+            emailChangeReq,
         }
     })
     return code;
