@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import {Prisma, PrismaClient} from '@prisma/client';
 import { isWithinExpirationDate } from "oslo";
 import { lucia } from '../lib/lucia-auth.js';
 import {generateEmailVerificationCode} from "../lib/generate-email-verification-code.js";
@@ -73,16 +73,22 @@ export const emailVerification = async (req: Request, res: Response) => {
 
     if (user.email !== dbCode.email) {
         if (dbCode.emailChangeReq) {
-            await prisma.user.update({
-                data: {
-                    email: dbCode.email
-                },
-                where: {
-                    id: user.id
+            try {
+                await prisma.user.update({
+                    data: {
+                        email: dbCode.email
+                    },
+                    where: {
+                        id: user.id
+                    }
+                })
+            } catch (err) {
+                if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+                    return res.status(400).json({ code: 2, msg: 'Email already used' });
                 }
-            })
+            }
         } else {
-            return res.status(400).json({ msg: "Invalid code" });
+            return res.status(400).json({ code: 1, msg: "Invalid code" });
         }
     }
 
@@ -122,6 +128,7 @@ export const requestEmailChange = async (req: Request, res: Response) => {
     })
 
     if (!user) {
+        console.log("err code: -1")
         return res.status(400).json({ code: -1, msg: "Invalid request" });
     }
 
@@ -133,10 +140,11 @@ export const requestEmailChange = async (req: Request, res: Response) => {
     });
 
     if (!validPassword) {
+        console.log("err code: 1")
         return res.status(400).json({ code: 1, msg: "Invalid password" });
     }
 
-    if (!newEmail || typeof newEmail !== "string" || !isValidEmail(newEmail)) {
+    if (typeof newEmail !== "string" || !isValidEmail(newEmail)) {
         console.error("Invalid email");
         return res.status(400).json({ code: 2, msg: "Invalid email" });
     }

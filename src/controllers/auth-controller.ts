@@ -88,12 +88,15 @@ export const signup = async (req: Request, res: Response) => {
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
             return res.status(400).json({ code: 4, msg: 'Email already used' });
         } else {
-            await prisma.emailVerificationCodes.delete({
-                where: {
-                    userId: userId
-                }
-            })
-            return res.status(500).send("Internal error")
+            try {
+                await prisma.emailVerificationCodes.delete({
+                    where: {
+                        userId: userId
+                    }
+                })
+            } finally {
+                res.status(500).send("Internal error")
+            }
         }
     }
 };
