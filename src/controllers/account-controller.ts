@@ -149,6 +149,15 @@ export const requestEmailChange = async (req: Request, res: Response) => {
         return res.status(400).json({ code: 2, msg: "Invalid email" });
     }
 
+    const newEmailCount = await prisma.user.count({
+        where: {
+            email: newEmail
+        }
+    })
+
+    if (newEmailCount > 1)
+        return res.status(400).json({ code: 2, msg: "Already used email" });
+
     try {
         const verificationCode = await generateEmailVerificationCode(userId, newEmail, true);
         await sendVerificationCode(newEmail, verificationCode);
