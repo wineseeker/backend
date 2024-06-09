@@ -269,10 +269,16 @@ export const deleteAccount = async (req: Request, res: Response) => {
     const userId = res.locals.user.id
     const password = req.body.password
 
+    console.log(password)
+
+    if (typeof password !== "string")
+        return res.status(400).json({ code: 1, msg: "Invalid password" });
+
     const matchPassword = await validPassword(userId, password)
     if (matchPassword === null) {
         return res.status(401).json({ msg: "Not logged in" });
     } else if (!matchPassword) {
+        console.error("Invalid password");
         return res.status(400).json({ code: 1, msg: "Invalid password" });
     }
 
