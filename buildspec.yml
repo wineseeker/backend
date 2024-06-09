@@ -6,6 +6,10 @@ phases:
       nodejs: 20
     commands:
       - npm ci
+      - filename=".env"
+      - touch $filename
+      - echo DATABASE_URL=$(aws ssm get-parameters --names $path"/wine-seeker/backend/production/DATABASE_URL" --query Parameters[0].Value | sed 's/"//g') > $filename
+      - npx prisma generate
   build:
     commands:
       - npm run build
