@@ -156,7 +156,7 @@ export const requestEmailChange = async (req: Request, res: Response) => {
     })
 
     if (newEmailCount > 1)
-        return res.status(400).json({ code: 2, msg: "Already used email" });
+        return res.status(400).json({ code: 3, msg: "Already used email" });
 
     try {
         const verificationCode = await generateEmailVerificationCode(userId, newEmail, true);
