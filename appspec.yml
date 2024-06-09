@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/wineseeker/backend
+
+permissions:
+  - object: /home/wineseeker/backend
+    owner: wineseeker
+    group: wineseeker
+
+hooks:
+  ApplicationStart:
+    - location: shell-scripts/start_server.sh
+      timeout: 300
+      runas: wineseeker
