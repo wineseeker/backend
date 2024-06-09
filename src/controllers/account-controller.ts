@@ -184,6 +184,7 @@ export const changePassword = async (req: Request, res: Response) => {
     }
 
     const matchPassword = await validPassword(userId, password)
+    console.log("matchPassword: " + matchPassword)
     if (matchPassword === null) {
         return res.status(401).json({ msg: "Not logged in" });
     } else if (!matchPassword) {
