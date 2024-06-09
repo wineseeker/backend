@@ -45,7 +45,7 @@ export const emailVerification = async (req: Request, res: Response) => {
     const user = res.locals.user
 
     if (typeof req.body.code !== "string") {
-        return res.status(400).json({ msg: "Invalid code" });
+        return res.status(400).json({ code: 1, msg: "Invalid code" });
     }
 
     const dbCode = await prisma.emailVerificationCodes.findUnique({
@@ -55,7 +55,7 @@ export const emailVerification = async (req: Request, res: Response) => {
     })
 
     if (!dbCode || dbCode.code !== req.body.code) {
-        return res.status(400).json({ msg: "Invalid code" });
+        return res.status(400).json({ code: 1, msg: "Invalid code" });
     }
 
     await prisma.emailVerificationCodes.delete({
@@ -65,11 +65,11 @@ export const emailVerification = async (req: Request, res: Response) => {
     })
 
     if (!isWithinExpirationDate(dbCode.expiresAt)) {
-        return res.status(400).json({ msg: "Expired code" });
+        return res.status(400).json({ code: 2, msg: "Expired code" });
     }
 
     if (user.id !== dbCode.userId)
-        return res.status(400).json({ msg: "Invalid code" });
+        return res.status(400).json({ code: 1, msg: "Invalid code" });
 
     if (user.email !== dbCode.email) {
         if (dbCode.emailChangeReq) {
@@ -84,7 +84,7 @@ export const emailVerification = async (req: Request, res: Response) => {
                 })
             } catch (err) {
                 if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-                    return res.status(400).json({ code: 2, msg: 'Email already used' });
+                    return res.status(400).json({ code: 3, msg: 'Email already used' });
                 }
             }
         } else {
