@@ -69,7 +69,7 @@ export const signup = async (req: Request, res: Response) => {
     const userId = generateIdFromEntropySize(10); // 16 characters long
 
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async () => {
             const user = await prisma.user.create({
                 data: {
                     id: userId,
