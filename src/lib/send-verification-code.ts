@@ -1,7 +1,7 @@
 import {transporter} from "./transporter.js";
 
 export async function sendVerificationCode(email: string, verificationCode: string): Promise<void> {
-    const sendAddress: string = process.env.SMTP_FROM_ADDRESS ? process.env.SMTP_FROM_ADDRESS : "noreply@wineseeker.net"
+    const sendAddress: string = process.env.SMTP_FROM_ADDRESS || "noreply@wineseeker.net"
 
     await transporter.sendMail({
         from: `"와인 시커" <${sendAddress}>`, // sender address
