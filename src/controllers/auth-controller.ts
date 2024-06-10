@@ -69,21 +69,19 @@ export const signup = async (req: Request, res: Response) => {
     const userId = generateIdFromEntropySize(10); // 16 characters long
 
     try {
-        await prisma.$transaction(async (tx) => {
-            const user = await prisma.user.create({
-                data: {
-                    id: userId,
-                    email,
-                    password_hash: passwordHash,
-                }
-            });
+        const user = await prisma.user.create({
+            data: {
+                id: userId,
+                email,
+                password_hash: passwordHash,
+            }
+        });
 
-            const verificationCode = await generateEmailVerificationCode(userId, email, false);
-            await sendVerificationCode(email, verificationCode);
+        // const verificationCode = await generateEmailVerificationCode(userId, email, false);
+        // await sendVerificationCode(email, verificationCode);
 
-            const session = await lucia.createSession(user.id, {});
-            return res.status(201).json(session);
-        })
+        const session = await lucia.createSession(user.id, {});
+        return res.status(201).json(session);
     } catch (err) {
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
             return res.status(400).json({ code: 4, msg: 'Email already used' });
@@ -92,6 +90,11 @@ export const signup = async (req: Request, res: Response) => {
                 await prisma.emailVerificationCodes.delete({
                     where: {
                         userId: userId
+                    }
+                })
+                await prisma.user.delete({
+                    where: {
+                        id: userId,
                     }
                 })
             } finally {
