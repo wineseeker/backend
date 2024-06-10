@@ -4,6 +4,8 @@ files:
   - source: /
     destination: /home/wineseeker/backend
 
+file_exists_behavior: OVERWRITE
+
 permissions:
   - object: /home/wineseeker/backend
     owner: wineseeker
