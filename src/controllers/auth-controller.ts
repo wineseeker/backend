@@ -77,8 +77,8 @@ export const signup = async (req: Request, res: Response) => {
             }
         });
 
-        // const verificationCode = await generateEmailVerificationCode(userId, email, false);
-        // await sendVerificationCode(email, verificationCode);
+        const verificationCode = await generateEmailVerificationCode(userId, email, false);
+        await sendVerificationCode(email, verificationCode);
 
         const session = await lucia.createSession(user.id, {});
         return res.status(201).json(session);
