@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-import cors from 'cors';
 // @ts-ignore
 import swaggerDocument from "../swagger-output.json" assert { type: "json" };
 
@@ -18,6 +17,7 @@ import surveyRouter from './routes/survey.js';
 import resultRouter from './routes/result.js';
 import wineRouter from './routes/wine.js';
 import searchRouter from './routes/search.js';
+import rakingRouter from './routes/ranking.js'
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -38,6 +38,7 @@ app.use('/survey', surveyRouter);
 app.use('/result', resultRouter);
 app.use('/wine', wineRouter)
 app.use('/search', searchRouter)
+app.use('/ranking', rakingRouter)
 //swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
