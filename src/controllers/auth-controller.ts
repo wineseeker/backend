@@ -83,6 +83,7 @@ export const signup = async (req: Request, res: Response) => {
         const session = await lucia.createSession(user.id, {});
         return res.status(201).json(session);
     } catch (err) {
+        console.log(err)
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
             return res.status(400).json({ code: 4, msg: 'Email already used' });
         } else {
