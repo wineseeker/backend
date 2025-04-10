@@ -2,27 +2,28 @@
 와인 시커의 백엔드 입니다. express.js 기반의 REST API 서버이며, prisma orm을 사용하였고 esm을 사용한 js로 컴파일 되는 타입스크립트로 작성하였습니다.
 
 ## 요구 사항
-이 앱을 실행하려면 컴퓨터에 node.js 20 버전이 설치되어야 합니다. 이 외의 버전은 정상 작동을 장담할 수 없으며, 실제로 이 앱은 node.js 18 이하 버전에 서 오작동 합니다.
+이 앱을 실행하려면 컴퓨터에 node.js 20 버전이 설치되어야 합니다. 이 외의 버전(node.js 22 같은 상위 버전도 포함합니다.)은 정상 작동을 장담할 수 없으며, 실제로 이 앱은 node.js 18 이하 버전에 서 오작동 합니다.
 
 ## 개발 환경 셋팅 방법
 1. node.js 20 버전을 설치합니다. 권장하는 방법은 nvs(윈도우 환경에서 권장), nvm(맥, 리눅스 등에서 권장) 등의 버전 관리자를 사용하는 것입니다. node.js 20 버전이 설치되어있으면 이를 생략합니다.
-2. IDE 혹은 에디터를 설치합니다. 권장하는 에디터는 젯브레인즈 사의 웹스톰(WebStorm)이며 mju.ac.kr 메일을 통해 학생 라이선스를 발급 받을 수 있습니다. VS Code를 써도 상관이 없으나, 편의성 면에서는 웹스톰이 우위입니다. 웹스톰은 데이터베이스 엑서스를 기본적으로 지원하지 않아서 유료 플러그인을 설치해야 하나, 학생 라이선스 보유자, 데이터그립 라이선스 보유자, 올 프로덕트팩 라이선스 보유자는 무료입니다.
+1. IDE 혹은 에디터를 설치합니다. 권장하는 에디터는 젯브레인즈 사의 웹스톰(WebStorm)이며 mju.ac.kr 메일을 통해 학생 라이선스를 발급 받을 수 있습니다. VS Code를 써도 상관이 없으나, 편의성 면에서는 웹스톰이 우위입니다. 웹스톰은 데이터베이스 엑서스를 기본적으로 지원하지 않아서 유료 플러그인을 설치해야 하나, 학생 라이선스 보유자, 데이터그립 라이선스 보유자, 올 프로덕트팩 라이선스 보유자는 무료입니다.
     ```
     npm install
     ```
-4. ```.env.sample``` 파일을 ```.env``` 파일로 복사하세요. 그 다음 데이터베이스 URL에 적절한 값을 작성합니다. 데이터베이스 URL 작성방식은 아래와 같으며 포트는 기본적인 MySQL 설치 환경에서는 3306 포트입니다. HOST 란은 로컬에 있는 DB 사용시 localhost 입니다.
+1. ```.env.sample``` 파일을 ```.env``` 파일로 복사하세요. 그 다음 데이터베이스 URL에 적절한 값을 작성합니다. 데이터베이스 URL 작성방식은 아래와 같으며 포트는 기본적인 MySQL 설치 환경에서는 3306 포트입니다. HOST 란은 로컬에 있는 DB 사용시 localhost 입니다.
    ```
    mysql://USER:PASSWORD@HOST:PORT/DATABASE
    ```
-5. 다음 명령어로 프리즈마 마이그레이트를 실행합니다. 이 명령어는 개발 환경 전용 명령어로 프로덕션에서 실행하면 안됩니다.
+1. `SMTP_`로 시작하는 SMTP 관련 값도 적절한 값으로 변경하세요. 개발과 테스트 등에서는 [MailHog](https://github.com/mailhog/MailHog) 같은 가짜 SMTP 서버를 사용해도 됩니다. `.env.sample` 파일은 [MailHog](https://github.com/mailhog/MailHog)를 사용하는 것으로 전제되어 있습니다.
+1. 다음 명령어로 프리즈마 마이그레이트를 실행합니다. 이 명령어는 개발 환경 전용 명령어로 프로덕션에서 실행하면 안됩니다.
    ```
    npx prisma migrate dev
    ```
-6. 프리즈마 제너레이트 명령어를 실행합니다.
+1. 프리즈마 제너레이트 명령어를 실행합니다.
    ```
    npx prisma generate
    ```
-7. 아래와 같은 명령어로 개발 서버를 실행합니다.
+1. 아래와 같은 명령어로 개발 서버를 실행합니다.
    ```
    npm run dev
    ```
@@ -39,3 +40,8 @@
 
 ### ```swagger-output.json``` 파일 임의 수정 금지
 ```swagger-output.json``` 파일은 swagger-autogen에서 생성하는 파일로 API 정의가 자동으로 생성됩니다. 수정할 부분이 있을 경우 swagger-autogen에서 정하는 대로 API 정의가 수정되도록 해야합니다. ```swagger-output.json``` 파일에 출력되는 내용을 바꾸고 싶다면 https://swagger-autogen.github.io/docs 를 참고하세요.
+
+## `.env`에 적절한 SMTP 설정을 해야 정상 작동합니다
+이 프로그램은 적절한 SMTP 설정을 하지 않으면 정상 작동하지 않습니다. `.env`에서 `SMTP_FROM_ADDRESS`, `SMTP_HOST`, `SMTP_SECURE`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`를 적절한 값으로 설정하세요. [MailHog](https://github.com/mailhog/MailHog) 같은 가짜 SMTP 서버를 사용하세요.
+
+`.env.sample` 파일은 [MailHog](https://github.com/mailhog/MailHog)를 사용하는 것으로 전제되어 있습니다.
